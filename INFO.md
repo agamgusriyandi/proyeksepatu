@@ -58,6 +58,10 @@ Modul operasional untuk melacak perbaikan barang/mesin milik customer.
 ## 7. Output & Pelaporan (Reporting)
 *   **Cetak & Ekspor:** Seluruh dokumen transaksi (Penawaran, PO, Surat Jalan, Invoice) harus dapat dicetak langsung (*Print*) dan diekspor ke dalam format **PDF**.
 
+## 8. Modul Hak Akses & Keamanan (RBAC)
+*   Sistem telah di-upgrade dengan dukungan **Role-Based Access Control (RBAC)** dinamis.
+*   Tidak menggunakan hak akses yang *hardcoded*, melainkan menggunakan struktur tabel `ROLES` dan `PERMISSIONS` sehingga Superadmin dapat membuat grup baru dan mengatur hak akses (seperti *Create PO*, *Approve Quotation*) dengan fleksibel sesuai kebutuhan perusahaan.
+
 ---
 
 ## Kesimpulan & Next Steps
@@ -65,7 +69,7 @@ Gambar `PHOTO-2026-05-18-23-18-52.jpg` secara visual memetakan hubungan antar-mo
 
 Sistem ini sangat menekankan pada **fleksibilitas alur kerja**, terutama untuk penanganan sparepart (kirim dulu, tagih belakangan) dan integrasi antara modul Servis dengan Pembelian/Penawaran.
 
-**Tahap Selanjutnya (Rekomendasi):**
-1. Merancang **Entity Relationship Diagram (ERD)** atau Struktur Database berdasarkan entitas yang ada (Master, Transaksi Penawaran, Transaksi PO, Servis).
-2. Merancang **Wireframe/Mockup UI** berdasarkan coretan yang ada pada gambar.
-3. Memilih *Tech Stack* (Framework Frontend & Backend) yang sesuai untuk pengembangan sistem ERP ini.
+**Tahap Selanjutnya (Status Saat Ini):**
+1. ✅ Merancang **Entity Relationship Diagram (ERD)** (v3 Final dengan RBAC).
+2. ✅ Merancang **UI/UX (Frontend MVP)** (Telah dibangun dengan React 19, Vite, Tailwind CSS dengan estetika *Dark Mode* & *Glassmorphism*). Menu disesuaikan 100% dengan ERD dan dilokalisasi dengan Bahasa Indonesia & mata uang Rupiah.
+3. ⏳ Menguji responsivitas UI dan peluncuran MVP.

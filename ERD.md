@@ -20,9 +20,29 @@ erDiagram
         int id PK
         string email
         string password
-        string role "Superadmin, Admin, Sales, Teknisi, Kasir"
         int employee_id FK "Opsional: Profil karyawan"
         datetime created_at
+    }
+
+    ROLES {
+        int id PK
+        string name "Contoh: Superadmin, Admin, Sales, Teknisi"
+    }
+
+    PERMISSIONS {
+        int id PK
+        string name "Contoh: create_po, approve_quotation"
+        string group_name "Modul: Purchase, Sales, Master"
+    }
+
+    ROLE_PERMISSIONS {
+        int role_id FK
+        int permission_id FK
+    }
+
+    USER_ROLES {
+        int user_id FK
+        int role_id FK
     }
 
     COMPANIES {
@@ -298,8 +318,12 @@ erDiagram
     %% RELASI ANTAR ENTITAS
     %% ========================================
 
-    %% Master
+    %% Master & RBAC
     USERS ||--o| EMPLOYEES : "terhubung ke profil"
+    USERS ||--o{ USER_ROLES : "memiliki role"
+    ROLES ||--o{ USER_ROLES : "dimiliki user"
+    ROLES ||--o{ ROLE_PERMISSIONS : "memiliki hak akses"
+    PERMISSIONS ||--o{ ROLE_PERMISSIONS : "diberikan ke role"
     COMPANIES ||--o{ CUSTOMERS : "memiliki"
 
     %% Sales Flow
@@ -386,26 +410,30 @@ erDiagram
 
 ## Penjelasan Tabel
 
-### Master Data (6 tabel)
-1. **USERS:** Autentikasi login. Terhubung ke `EMPLOYEES` untuk identitas profil.
-2. **COMPANIES:** Perusahaan (PT PPN / Non-PPN) yang menaungi Customer.
-3. **CUSTOMERS:** Perwakilan/PIC dari suatu Company.
-4. **SUPPLIERS:** Data pemasok barang dan vendor servis. Dilengkapi status PKP dan rekening bank.
-5. **EMPLOYEES:** Karyawan internal (Admin, Kurir, Teknisi, Sales).
-6. **PRODUCTS:** Barang dan Jasa. Menyimpan harga modal, stok saat ini, dan satuan default.
+### Master Data & RBAC (10 tabel)
+1. **USERS:** Autentikasi login. Terhubung ke `EMPLOYEES`.
+2. **ROLES (RBAC):** Definisi grup hak akses (Superadmin, Admin, dll).
+3. **PERMISSIONS (RBAC):** Definisi spesifik hak akses per aksi (buat PO, hapus Invoice).
+4. **ROLE_PERMISSIONS (RBAC):** Pivot hak akses yang dimiliki oleh suatu Role.
+5. **USER_ROLES (RBAC):** Pivot user mana memiliki role apa.
+6. **COMPANIES:** Perusahaan (PT PPN / Non-PPN) yang menaungi Customer.
+7. **CUSTOMERS:** Perwakilan/PIC dari suatu Company.
+8. **SUPPLIERS:** Data pemasok barang dan vendor servis. Dilengkapi status PKP dan rekening bank.
+9. **EMPLOYEES:** Karyawan internal (Admin, Kurir, Teknisi, Sales).
+10. **PRODUCTS:** Barang dan Jasa. Menyimpan harga modal, stok saat ini, dan satuan default.
 
 ### Transaksi (18 tabel)
-7. **INVENTORY_MOVEMENTS:** Kartu stok. Merekam setiap mutasi IN/OUT beserta saldo setelah mutasi.
-8. **QUOTATIONS / DETAILS:** Penawaran harga ke customer.
-9. **SALES_ORDERS / DETAILS:** Konfirmasi pesanan setelah penawaran disetujui.
-10. **DELIVERY_ORDERS / DETAILS:** Surat jalan pengiriman. Bisa bertahap.
-11. **SALES_INVOICES / DETAILS:** Tagihan penjualan. Harga di-*snapshot* (dikunci permanen).
-12. **SALES_PAYMENTS:** Riwayat pembayaran dari customer. Mendukung cicilan/termin.
-13. **PURCHASE_ORDERS / DETAILS:** Pesanan pembelian ke supplier.
-14. **GOODS_RECEIPTS / DETAILS:** Bukti terima barang fisik dari supplier. Memotong stok masuk.
-15. **PURCHASE_INVOICES / DETAILS:** Tagihan dari supplier. Harga di-*snapshot*.
-16. **PURCHASE_PAYMENTS:** Riwayat pembayaran ke supplier.
-17. **SERVICES:** Tracking servis dari awal sampai akhir.
-18. **SERVICE_DETAILS:** Sparepart yang digunakan selama servis.
+11. **INVENTORY_MOVEMENTS:** Kartu stok. Merekam setiap mutasi IN/OUT beserta saldo setelah mutasi.
+12. **QUOTATIONS / DETAILS:** Penawaran harga ke customer.
+13. **SALES_ORDERS / DETAILS:** Konfirmasi pesanan setelah penawaran disetujui.
+14. **DELIVERY_ORDERS / DETAILS:** Surat jalan pengiriman. Bisa bertahap.
+15. **SALES_INVOICES / DETAILS:** Tagihan penjualan. Harga di-*snapshot* (dikunci permanen).
+16. **SALES_PAYMENTS:** Riwayat pembayaran dari customer. Mendukung cicilan/termin.
+17. **PURCHASE_ORDERS / DETAILS:** Pesanan pembelian ke supplier.
+18. **GOODS_RECEIPTS / DETAILS:** Bukti terima barang fisik dari supplier. Memotong stok masuk.
+19. **PURCHASE_INVOICES / DETAILS:** Tagihan dari supplier. Harga di-*snapshot*.
+20. **PURCHASE_PAYMENTS:** Riwayat pembayaran ke supplier.
+21. **SERVICES:** Tracking servis dari awal sampai akhir.
+22. **SERVICE_DETAILS:** Sparepart yang digunakan selama servis.
 
-### Total: 24 Tabel (6 Master + 18 Transaksi)
+### Total: 28 Tabel (10 Master/RBAC + 18 Transaksi)
